@@ -5,8 +5,9 @@ import javarmi.server.core.model.News;
 import javarmi.server.core.model.Topic;
 import javarmi.server.core.model.User;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface Service {
 
@@ -15,8 +16,8 @@ public interface Service {
     boolean subscribeTopic(String topicName, User reader);
 
     void addNews(News news, User publisher);
-    News getLastNews(String topicName);
+    Optional<News> getLastNews(String topicName);
     List<News> getNews();
-    List<News> getNews(Date start, Date end, String topicName);
+    List<News> getNews(LocalDateTime start, LocalDateTime end, String topicName);
 
 }

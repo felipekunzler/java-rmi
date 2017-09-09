@@ -7,6 +7,10 @@ public class Topic {
     private String name;
     private List<User> subscribers;
 
+    public Topic(String topicName) {
+        name = topicName;
+    }
+
     public String getName() {
         return name;
     }

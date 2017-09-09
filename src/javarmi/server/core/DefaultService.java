@@ -4,9 +4,12 @@ import javarmi.server.core.model.News;
 import javarmi.server.core.model.Topic;
 import javarmi.server.core.model.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DefaultService implements Service {
 
@@ -30,7 +33,7 @@ public class DefaultService implements Service {
 
     @Override
     public boolean subscribeTopic(String topicName, User reader) {
-        for (Topic topic: topics) {
+        for (Topic topic : topics) {
             if (topic.getName().equals(topicName)) {
                 topic.getSubscribers().remove(reader);
                 topic.getSubscribers().add(reader);
@@ -41,26 +44,34 @@ public class DefaultService implements Service {
     }
 
     @Override
-    public void addNews(News news, User publisher) {
-        if (!topics.contains(news.getTopic())) {
-            topics.add(news.getTopic());
+    public void addNews(News aNews, User publisher) {
+        if (!topics.contains(aNews.getTopic())) {
+            topics.add(aNews.getTopic());
         }
-        // TODO: Add news
+        this.news.add(aNews);
     }
 
     @Override
-    public News getLastNews(String topicName) {
-        return null;
+    public Optional<News> getLastNews(String topicName) {
+        return news.stream()
+                .filter(new Topic(topicName)::equals)
+                .reduce((f, s) -> s);
     }
 
     @Override
     public List<News> getNews() {
-        return null;
+        return news;
     }
 
     @Override
-    public List<News> getNews(Date start, Date end, String topicName) {
-        return null;
+    public List<News> getNews(LocalDateTime start, LocalDateTime end, String topicName) {
+        return news.stream()
+                .filter(new Topic(topicName)::equals)
+                .flatMap(n -> Stream.of(n.getDate())
+                        .filter(start::isBefore)
+                        .filter(end::isAfter)
+                        .map(d -> n))
+                .collect(Collectors.toList());
     }
 
 }

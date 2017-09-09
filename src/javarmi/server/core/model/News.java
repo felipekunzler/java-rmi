@@ -1,11 +1,11 @@
 package javarmi.server.core.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class News {
 
     private String content;
-    private Date date;
+    private LocalDateTime date;
     private Topic topic;
     private User publisher;
 
@@ -17,11 +17,11 @@ public class News {
         this.content = content;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -40,4 +40,5 @@ public class News {
     public void setPublisher(User publisher) {
         this.publisher = publisher;
     }
+
 }
