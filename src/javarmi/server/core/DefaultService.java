@@ -7,71 +7,97 @@ import javarmi.server.core.model.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DefaultService implements Service {
 
+    private static final int MAX_NEWS_PER_TOPIC = 5;
+    private static final String SECRET = "SEGREDO";
+
     private List<Topic> topics = new ArrayList<>();
     private List<News> news = new ArrayList<>();
     private List<User> publishers = new ArrayList<>();
-    private List<User> users = new ArrayList<>();
 
-
-    @Override
-    public void addTopic(Topic topic, User publisher) {
+    @Override // publisher
+    public synchronized void addTopic(Topic topic, User publisher, String password) {
+        checkPassword(password);
         publishers.remove(publisher);
         publishers.add(publisher);
         topics.add(topic);
     }
 
-    @Override
-    public List<Topic> getTopics() {
+    @Override // publisher
+    public List<Topic> getTopics(String password) {
         return topics;
     }
 
-    @Override
-    public boolean subscribeTopic(String topicName, User reader) {
+    @Override // subscriber
+    public synchronized boolean subscribeTopic(String topicName, User subscriber) {
         for (Topic topic : topics) {
             if (topic.getName().equals(topicName)) {
-                topic.getSubscribers().remove(reader);
-                topic.getSubscribers().add(reader);
+                topic.getSubscribers().remove(subscriber);
+                topic.getSubscribers().add(subscriber);
                 return true;
             }
         }
         return false;
     }
 
-    @Override
-    public void addNews(News aNews, User publisher) {
-        if (!topics.contains(aNews.getTopic())) {
-            topics.add(aNews.getTopic());
+    @Override // publisher
+    public synchronized void addNews(News aNews, String password) {
+        checkPassword(password);
+        if (topics.contains(new Topic(aNews.getTopicName()))) {
+            releaseNewsIfFull(aNews.getTopicName());
+            news.add(aNews);
         }
-        this.news.add(aNews);
+        throw new JavaRMIException("Adding news to non existing topic");
     }
 
-    @Override
+    private void releaseNewsIfFull(String topicName) {
+        ListIterator<News> iterator = news.listIterator(news.size());
+        int count = 0;
+        while (iterator.hasPrevious()) {
+            News n = iterator.previous();
+            if (n.getTopicName().equals(topicName)) {
+                count++;
+            }
+            if (count == MAX_NEWS_PER_TOPIC) {
+                iterator.remove();
+            }
+        }
+    }
+
+    @Override // all
     public Optional<News> getLastNews(String topicName) {
         return news.stream()
-                .filter(new Topic(topicName)::equals)
+                .filter(n -> n.getTopicName().equals(topicName))
                 .reduce((f, s) -> s);
     }
 
-    @Override
-    public List<News> getNews() {
+    @Override // publisher
+    public List<News> getNews(String password) {
+        checkPassword(password);
         return news;
     }
 
-    @Override
+    @Override // all
     public List<News> getNews(LocalDateTime start, LocalDateTime end, String topicName) {
         return news.stream()
-                .filter(new Topic(topicName)::equals)
+                .filter(n -> n.getTopicName().equals(topicName))
                 .flatMap(n -> Stream.of(n.getDate())
                         .filter(start::isBefore)
                         .filter(end::isAfter)
                         .map(d -> n))
                 .collect(Collectors.toList());
+    }
+
+    private void checkPassword(String password) {
+        if (!SECRET.equals(password)) {
+            throw new JavaRMIException("Invalid credentials");
+        }
     }
 
 }

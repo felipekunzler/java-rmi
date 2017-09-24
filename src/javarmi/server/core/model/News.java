@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 
 public class News {
 
+    private static final int MAX_CONTENT_SIZE = 180;
+
     private String content;
     private LocalDateTime date;
-    private Topic topic;
+    private String topicName;
     private User publisher;
 
     public String getContent() {
@@ -14,6 +16,9 @@ public class News {
     }
 
     public void setContent(String content) {
+        if (content.length() > MAX_CONTENT_SIZE) {
+            content = content.substring(MAX_CONTENT_SIZE);
+        }
         this.content = content;
     }
 
@@ -25,12 +30,12 @@ public class News {
         this.date = date;
     }
 
-    public Topic getTopic() {
-        return topic;
+    public String getTopicName() {
+        return topicName;
     }
 
-    public void setTopic(Topic topic) {
-        this.topic = topic;
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
     }
 
     public User getPublisher() {

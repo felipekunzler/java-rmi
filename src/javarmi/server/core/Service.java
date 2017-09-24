@@ -11,13 +11,15 @@ import java.util.Optional;
 
 public interface Service {
 
-    void addTopic(Topic topic, User publisher);
-    List<Topic> getTopics();
-    boolean subscribeTopic(String topicName, User reader);
+    void addTopic(Topic topic, User publisher, String password);
+    List<Topic> getTopics(String password);
 
-    void addNews(News news, User publisher);
+    boolean subscribeTopic(String topicName, User subscriber);
+
+    void addNews(News aNews, String password);
+
     Optional<News> getLastNews(String topicName);
-    List<News> getNews();
+    List<News> getNews(String password);
     List<News> getNews(LocalDateTime start, LocalDateTime end, String topicName);
 
 }
