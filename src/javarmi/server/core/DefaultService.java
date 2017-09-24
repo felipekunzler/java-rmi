@@ -4,6 +4,8 @@ import javarmi.server.core.model.News;
 import javarmi.server.core.model.Topic;
 import javarmi.server.core.model.User;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DefaultService implements Service {
+public class DefaultService extends UnicastRemoteObject implements Service {
 
     private static final int MAX_NEWS_PER_TOPIC = 5;
     private static final String SECRET = "SEGREDO";
@@ -20,6 +22,10 @@ public class DefaultService implements Service {
     private List<Topic> topics = new ArrayList<>();
     private List<News> news = new ArrayList<>();
     private List<User> publishers = new ArrayList<>();
+
+    protected DefaultService() throws RemoteException {
+        super();
+    }
 
     @Override // publisher
     public synchronized void addTopic(Topic topic, User publisher, String password) {
@@ -71,10 +77,11 @@ public class DefaultService implements Service {
     }
 
     @Override // all
-    public Optional<News> getLastNews(String topicName) {
+    public News getLastNews(String topicName) {
         return news.stream()
                 .filter(n -> n.getTopicName().equals(topicName))
-                .reduce((f, s) -> s);
+                .reduce((f, s) -> s)
+                .orElse(null);
     }
 
     @Override // publisher

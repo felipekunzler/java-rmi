@@ -1,9 +1,19 @@
 package javarmi.server.core;
 
-public class Server {
+import java.rmi.Naming;
+import java.rmi.RemoteException;
 
-    public static void main(String[] args) {
+public class Server extends DefaultService {
 
+    protected Server() throws RemoteException {
+    }
+
+    public static void main(String[] args) throws Exception {
+        // Call rmiregistry on ~/projects/git/java-rmi/out/production/java-rmi first.
+        // rmiregistry -J-classpath -J/Users/i851309/projects/git/java-rmi/out/production/java-rmi
+        Service service = new DefaultService();
+        Naming.rebind("rmiServiceServer", service);
+        //UnicastRemoteObject.unexportObject(service, true);
     }
 
 }
