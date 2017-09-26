@@ -1,9 +1,9 @@
-package javarmi.server.core;
+package javarmi.core;
 
 
-import javarmi.server.core.model.News;
-import javarmi.server.core.model.Topic;
-import javarmi.server.core.model.User;
+import javarmi.core.model.News;
+import javarmi.core.model.Topic;
+import javarmi.core.model.User;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

@@ -1,4 +1,4 @@
-package javarmi.server.core;
+package javarmi.core;
 
 public class JavaRMIException extends RuntimeException {
 

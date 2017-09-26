@@ -1,6 +1,6 @@
 package javarmi.client.core;
 
-import javarmi.server.core.Service;
+import javarmi.core.Service;
 
 import java.rmi.Naming;
 

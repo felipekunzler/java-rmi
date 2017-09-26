@@ -1,0 +1,8 @@
+apply plugin: 'application'
+
+mainClassName = 'javarmi.server.Server'
+
+dependencies {
+    compile project(':core')
+    compile "com.rabbitmq:amqp-client:$rabbitmqVersion"
+}

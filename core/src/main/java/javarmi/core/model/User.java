@@ -1,4 +1,4 @@
-package javarmi.server.core.model;
+package javarmi.core.model;
 
 public class User {
 

@@ -1,4 +1,6 @@
-package javarmi.server.core;
+package javarmi.server;
+
+import javarmi.core.Service;
 
 import java.rmi.Naming;
 import java.rmi.RemoteException;

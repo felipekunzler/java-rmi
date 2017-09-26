@@ -1,8 +1,10 @@
-package javarmi.server.core;
+package javarmi.server;
 
-import javarmi.server.core.model.News;
-import javarmi.server.core.model.Topic;
-import javarmi.server.core.model.User;
+import javarmi.core.JavaRMIException;
+import javarmi.core.Service;
+import javarmi.core.model.News;
+import javarmi.core.model.Topic;
+import javarmi.core.model.User;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -10,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
