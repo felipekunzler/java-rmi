@@ -11,10 +11,11 @@ public class Server extends DefaultService {
     }
 
     public static void main(String[] args) throws Exception {
-        // Call rmiregistry on ~/projects/git/java-rmi/out/production/java-rmi first.
-        // rmiregistry -J-classpath -J/Users/i851309/projects/git/java-rmi/out/production/java-rmi
+        // Call rmiregistry with the Service interface on the classpath first.
+        // rmiregistry -J-classpath -J/Users/i851309/projects/git/java-rmi/core/out/production/classes
         Service service = new DefaultService();
         Naming.rebind("rmiServiceServer", service);
+        // Stops all RMI non-daemon threads
         //UnicastRemoteObject.unexportObject(service, true);
     }
 
