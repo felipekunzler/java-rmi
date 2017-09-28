@@ -9,7 +9,7 @@ public class News {
     private String content;
     private LocalDateTime date;
     private String topicName;
-    private User publisher;
+    private String publisher;
 
     public String getContent() {
         return content;
@@ -38,11 +38,11 @@ public class News {
         this.topicName = topicName;
     }
 
-    public User getPublisher() {
+    public String getPublisher() {
         return publisher;
     }
 
-    public void setPublisher(User publisher) {
+    public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 

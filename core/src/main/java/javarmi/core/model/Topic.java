@@ -1,11 +1,13 @@
 package javarmi.core.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Topic {
 
     private String name;
-    private List<User> subscribers;
+    private List<String> subscribers = new ArrayList<>();
+    private String publisher;
 
     public Topic(String topicName) {
         name = topicName;
@@ -19,21 +21,23 @@ public class Topic {
         this.name = name;
     }
 
-    public List<User> getSubscribers() {
+    public List<String> getSubscribers() {
         return subscribers;
     }
 
-    public void setSubscribers(List<User> subscribers) {
-        this.subscribers = subscribers;
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Topic topic = (Topic) o;
-
         return name.equals(topic.name);
     }
 
@@ -41,4 +45,5 @@ public class Topic {
     public int hashCode() {
         return name.hashCode();
     }
+
 }

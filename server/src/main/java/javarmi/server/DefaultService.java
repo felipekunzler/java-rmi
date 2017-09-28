@@ -4,14 +4,16 @@ import javarmi.core.JavaRMIException;
 import javarmi.core.Service;
 import javarmi.core.model.News;
 import javarmi.core.model.Topic;
-import javarmi.core.model.User;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,45 +24,56 @@ public class DefaultService extends UnicastRemoteObject implements Service {
 
     private List<Topic> topics = new ArrayList<>();
     private List<News> news = new ArrayList<>();
-    private List<User> publishers = new ArrayList<>();
 
     protected DefaultService() throws RemoteException {
         super();
     }
 
     @Override // publisher
-    public synchronized void addTopic(Topic topic, User publisher, String password) {
+    public void addTopic(Topic topic, String password) {
         checkPassword(password);
-        publishers.remove(publisher);
-        publishers.add(publisher);
-        topics.add(topic);
+        if (!topics.contains(topic)) {
+            topics.add(topic);
+        }
     }
 
     @Override // publisher
     public List<Topic> getTopics(String password) {
-        return topics;
+        return Collections.unmodifiableList(topics);
     }
 
     @Override // subscriber
-    public synchronized boolean subscribeTopic(String topicName, User subscriber) {
-        for (Topic topic : topics) {
-            if (topic.getName().equals(topicName)) {
-                topic.getSubscribers().remove(subscriber);
-                topic.getSubscribers().add(subscriber);
-                return true;
+    public void subscribeTopic(String topicName, String subscriber) {
+        Optional<Topic> topic = getTopic(topicName);
+        if (topic.isPresent()) {
+            if (!topic.get().getSubscribers().contains(subscriber)) {
+                topic.get().getSubscribers().add(subscriber);
             }
         }
-        return false;
+        else {
+            throw new JavaRMIException("Adding news to non existing topic");
+        }
     }
 
     @Override // publisher
-    public synchronized void addNews(News aNews, String password) {
+    public void addNews(News aNews, String password) {
         checkPassword(password);
-        if (topics.contains(new Topic(aNews.getTopicName()))) {
+        Optional<Topic> topic = getTopic(aNews.getTopicName());
+        if (topic.isPresent()) {
             releaseNewsIfFull(aNews.getTopicName());
             news.add(aNews);
         }
-        throw new JavaRMIException("Adding news to non existing topic");
+        else {
+            throw new JavaRMIException("Adding news to non existing topic");
+        }
+    }
+
+    private Optional<Topic> getTopic(String name) {
+        int i = topics.indexOf(new Topic(name));
+        if (i >= 0) {
+            return Optional.of(topics.get(i));
+        }
+        return Optional.empty();
     }
 
     private void releaseNewsIfFull(String topicName) {
@@ -79,16 +92,19 @@ public class DefaultService extends UnicastRemoteObject implements Service {
 
     @Override // all
     public News getLastNews(String topicName) {
-        return news.stream()
-                .filter(n -> n.getTopicName().equals(topicName))
-                .reduce((f, s) -> s)
-                .orElse(null);
+        for (int i = news.size() - 1; i >= 0; i--) {
+            News aNews = news.get(i);
+            if (aNews.getTopicName().equals(topicName)) {
+                return aNews;
+            }
+        }
+        return null;
     }
 
     @Override // publisher
     public List<News> getNews(String password) {
         checkPassword(password);
-        return news;
+        return Collections.unmodifiableList(news);
     }
 
     @Override // all
@@ -99,6 +115,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
                         .filter(start::isBefore)
                         .filter(end::isAfter)
                         .map(d -> n))
+                .sorted(Comparator.comparing(News::getDate))
                 .collect(Collectors.toList());
     }
 
