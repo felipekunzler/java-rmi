@@ -1,13 +1,15 @@
 package javarmi.core.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Topic {
+public class Topic implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String name;
     private List<String> subscribers = new ArrayList<>();
-    private String publisher;
 
     public Topic(String topicName) {
         name = topicName;
@@ -23,14 +25,6 @@ public class Topic {
 
     public List<String> getSubscribers() {
         return subscribers;
-    }
-
-    public String getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
     }
 
     @Override

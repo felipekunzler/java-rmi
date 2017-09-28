@@ -22,11 +22,13 @@ public class DefaultService extends UnicastRemoteObject implements Service {
     private static final int MAX_NEWS_PER_TOPIC = 5;
     private static final String SECRET = "SEGREDO";
 
+    private MessageQueueing messageQueueing;
+
     private List<Topic> topics = new ArrayList<>();
     private List<News> news = new ArrayList<>();
 
-    protected DefaultService() throws RemoteException {
-        super();
+    protected DefaultService(MessageQueueing messageQueueing) throws RemoteException {
+        this.messageQueueing = messageQueueing;
     }
 
     @Override // publisher
@@ -48,6 +50,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
         if (topic.isPresent()) {
             if (!topic.get().getSubscribers().contains(subscriber)) {
                 topic.get().getSubscribers().add(subscriber);
+                messageQueueing.bind(subscriber, topicName);
             }
         }
         else {
@@ -62,6 +65,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
         if (topic.isPresent()) {
             releaseNewsIfFull(aNews.getTopicName());
             news.add(aNews);
+            messageQueueing.publish(aNews);
         }
         else {
             throw new JavaRMIException("Adding news to non existing topic");

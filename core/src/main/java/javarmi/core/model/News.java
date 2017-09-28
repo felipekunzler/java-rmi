@@ -1,13 +1,15 @@
 package javarmi.core.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class News {
+public class News implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private static final int MAX_CONTENT_SIZE = 180;
 
     private String content;
-    private LocalDateTime date;
+    private LocalDateTime date = LocalDateTime.now();
     private String topicName;
     private String publisher;
 
@@ -26,10 +28,6 @@ public class News {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
     public String getTopicName() {
         return topicName;
     }
@@ -44,6 +42,16 @@ public class News {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "content='" + content + '\'' +
+                ", date=" + date +
+                ", topicName='" + topicName + '\'' +
+                ", publisher='" + publisher + '\'' +
+                '}';
     }
 
 }
