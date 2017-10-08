@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface Service extends Remote {
 
+    String REMOTE_BINDING = "rmiServiceServer";
+
     void addTopic(Topic topic, String password) throws RemoteException;
     List<Topic> getTopics(String password) throws RemoteException;
 
@@ -20,6 +22,6 @@ public interface Service extends Remote {
 
     News getLastNews(String topicName) throws RemoteException;
     List<News> getNews(String password) throws RemoteException;
-    List<News> getNews(LocalDateTime start, LocalDateTime end, String topicName) throws RemoteException;
+    List<News> getNews(LocalDateTime start, LocalDateTime end, String topicName);
 
 }

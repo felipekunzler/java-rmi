@@ -32,7 +32,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
     }
 
     @Override // publisher
-    public void addTopic(Topic topic, String password) {
+    public synchronized void addTopic(Topic topic, String password) {
         checkPassword(password);
         if (!topics.contains(topic)) {
             topics.add(topic);
@@ -45,7 +45,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
     }
 
     @Override // subscriber
-    public void subscribeTopic(String topicName, String subscriber) {
+    public synchronized void subscribeTopic(String topicName, String subscriber) {
         Optional<Topic> topic = getTopic(topicName);
         if (topic.isPresent()) {
             if (!topic.get().getSubscribers().contains(subscriber)) {
@@ -59,7 +59,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
     }
 
     @Override // publisher
-    public void addNews(News aNews, String password) {
+    public synchronized void addNews(News aNews, String password) {
         checkPassword(password);
         Optional<Topic> topic = getTopic(aNews.getTopicName());
         if (topic.isPresent()) {

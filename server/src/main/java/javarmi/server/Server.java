@@ -5,11 +5,7 @@ import javarmi.core.Service;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 
-public class Server extends DefaultService {
-
-    protected Server() throws RemoteException {
-        super(null);
-    }
+public class Server {
 
     public static void main(String[] args) throws RemoteException {
         Server server = new Server();
@@ -19,13 +15,11 @@ public class Server extends DefaultService {
     public void start() {
         try {
             // Call rmiregistry with the Service interface on the classpath first.
-            // rmiregistry -J-classpath -J/Users/i851309/projects/git/java-rmi/core/out/production/classes
+            // rmiregistry -J-classpath -J/java-rmi/core/out/production/classes
             // RabbitMQ server also need to be running: rabbitmq-server
             MessageQueueing mq = new MessageQueueing();
             Service service = new DefaultService(mq);
-            Naming.rebind("rmiServiceServer", service);
-            // Stops all RMI non-daemon threads
-            //UnicastRemoteObject.unexportObject(service, true);
+            Naming.rebind(Service.REMOTE_BINDING, service);
         }
         catch (Exception e) {
             throw new RuntimeException(e);

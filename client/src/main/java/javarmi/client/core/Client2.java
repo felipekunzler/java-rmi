@@ -5,19 +5,19 @@ import javarmi.core.model.News;
 import javarmi.core.model.Topic;
 
 import java.rmi.Naming;
-import java.util.function.Consumer;
 
-public class Client {
+public class Client2 {
 
     public static void main(String[] args) throws Exception {
         Service service = (Service) Naming.lookup("rmiServiceServer");
         QueueConsumer queueConsumer = new QueueConsumer("localhost");
-        queueConsumer.consume("client1", System.out::println);
+        queueConsumer.consume("client2", System.out::println);
 
         service.addTopic(new Topic("tech"), "SEGREDO");
         service.addTopic(new Topic("sports"), "SEGREDO");
 
-        service.subscribeTopic("tech", "client1");
+        service.subscribeTopic("tech", "client2");
+        service.subscribeTopic("sports", "client2");
 
         News news = new News();
         news.setContent("first news");
