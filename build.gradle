@@ -17,10 +17,14 @@ subprojects {
     ext {
         junitVersion = '4.12'
         rabbitmqVersion = '5.0.0'
+        log4j = '2.9.1'
     }
 
     dependencies {
         testCompile "junit:junit:$junitVersion"
+        compile "org.apache.logging.log4j:log4j-api:$log4j"
+        compile "org.apache.logging.log4j:log4j-core:$log4j"
+        compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4j"
     }
 
 }

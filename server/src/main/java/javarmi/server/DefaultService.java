@@ -4,6 +4,8 @@ import javarmi.core.JavaRMIException;
 import javarmi.core.Service;
 import javarmi.core.model.News;
 import javarmi.core.model.Topic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -19,6 +21,7 @@ import java.util.stream.Stream;
 
 public class DefaultService extends UnicastRemoteObject implements Service {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultService.class);
     private static final int MAX_NEWS_PER_TOPIC = 5;
     private static final String SECRET = "SEGREDO";
 
@@ -34,6 +37,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
     @Override // publisher
     public synchronized void addTopic(Topic topic, String password) {
         checkPassword(password);
+        log.info("New topic created {}", topic.getName());
         if (!topics.contains(topic)) {
             topics.add(topic);
         }
@@ -50,8 +54,8 @@ public class DefaultService extends UnicastRemoteObject implements Service {
         if (topic.isPresent()) {
             if (!topic.get().getSubscribers().contains(subscriber)) {
                 topic.get().getSubscribers().add(subscriber);
-                messageQueueing.bind(subscriber, topicName);
             }
+            messageQueueing.bind(subscriber, topicName);
         }
         else {
             throw new JavaRMIException("Adding news to non existing topic");

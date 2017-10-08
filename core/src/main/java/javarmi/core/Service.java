@@ -22,6 +22,6 @@ public interface Service extends Remote {
 
     News getLastNews(String topicName) throws RemoteException;
     List<News> getNews(String password) throws RemoteException;
-    List<News> getNews(LocalDateTime start, LocalDateTime end, String topicName);
+    List<News> getNews(LocalDateTime start, LocalDateTime end, String topicName) throws RemoteException;
 
 }
