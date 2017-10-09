@@ -22,16 +22,17 @@ import java.util.stream.Stream;
 public class DefaultService extends UnicastRemoteObject implements Service {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultService.class);
-    private static final int MAX_NEWS_PER_TOPIC = 5;
     private static final String SECRET = "SEGREDO";
+    private final int maxNewsPerTopic;
 
     private MessageQueueing messageQueueing;
 
     private List<Topic> topics = new ArrayList<>();
     private List<News> news = new ArrayList<>();
 
-    protected DefaultService(MessageQueueing messageQueueing) throws RemoteException {
+    public DefaultService(MessageQueueing messageQueueing, int maxNewsPerTopic) throws RemoteException {
         this.messageQueueing = messageQueueing;
+        this.maxNewsPerTopic = maxNewsPerTopic;
     }
 
     @Override // publisher
@@ -92,7 +93,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
             if (n.getTopicName().equals(topicName)) {
                 count++;
             }
-            if (count == MAX_NEWS_PER_TOPIC) {
+            if (count == maxNewsPerTopic) {
                 iterator.remove();
             }
         }

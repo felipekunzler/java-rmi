@@ -7,7 +7,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import com.sun.deploy.services.DefaultService;
 import javarmi.core.Util;
 import javarmi.core.model.News;
 import org.slf4j.Logger;
@@ -23,10 +22,12 @@ public class QueueConsumer {
 
     private Channel channel;
 
-    public QueueConsumer(String host) {
+    public QueueConsumer(String host, String user, String pass) {
         Util.rethrow(() -> {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost(host);
+            factory.setUsername(user);
+            factory.setPassword(pass);
             Connection connection = factory.newConnection();
             channel = connection.createChannel();
             channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE);

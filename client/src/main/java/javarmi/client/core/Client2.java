@@ -1,5 +1,6 @@
 package javarmi.client.core;
 
+import javarmi.core.Config;
 import javarmi.core.Service;
 import javarmi.core.model.News;
 import javarmi.core.model.Topic;
@@ -9,8 +10,10 @@ import java.rmi.Naming;
 public class Client2 {
 
     public static void main(String[] args) throws Exception {
-        Service service = (Service) Naming.lookup("rmiServiceServer");
-        QueueConsumer queueConsumer = new QueueConsumer("localhost");
+        Config c = Config.getInstance();
+
+        Service service = (Service) Naming.lookup(Service.REMOTE_BINDING);
+        QueueConsumer queueConsumer = new QueueConsumer(c.getRabbitHost(), c.getRabbitUser(), c.getRabbitPassword());
         queueConsumer.consume("client2", System.out::println);
 
         service.addTopic(new Topic("tech"), "SEGREDO");

@@ -16,10 +16,12 @@ public class MessageQueueing {
 
     private Channel channel;
 
-    public MessageQueueing() {
+    public MessageQueueing(String host, String user, String pass) {
         Util.rethrow(() -> {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("localhost");
+            factory.setHost(host);
+            factory.setUsername(user);
+            factory.setPassword(pass);
             Connection connection = factory.newConnection();
             channel = connection.createChannel();
             channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE);
