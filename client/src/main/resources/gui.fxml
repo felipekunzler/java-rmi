@@ -19,7 +19,7 @@
          <children>
             <ImageView fx:id="btn_topics" layoutX="14.0" layoutY="18.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@images/topics.png" />
+                  <Image url="@/images/topics.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -30,7 +30,7 @@
             </ImageView>
             <ImageView fx:id="btn_news" layoutX="116.0" layoutY="18.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@images/news.png" />
+                  <Image url="@/images/news.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -41,7 +41,7 @@
             </ImageView>
             <ImageView fx:id="btn_news_details" layoutX="217.0" layoutY="18.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@images/news_details.png" />
+                  <Image url="@/images/news_details.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -52,7 +52,7 @@
             </ImageView>
             <ImageView fx:id="btn_notifications" layoutX="316.0" layoutY="18.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@images/notification.png" />
+                  <Image url="@/images/notification.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
