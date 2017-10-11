@@ -8,6 +8,10 @@ import java.io.ObjectOutputStream;
 
 public class Util {
 
+    public static String getRemoteBinding() {
+        return "//" + Config.getInstance().getRabbitHost() + "/" + Service.REMOTE_BINDING;
+    }
+
     public static void rethrow(ExceptionalRunnable r) {
         try {
             r.run();

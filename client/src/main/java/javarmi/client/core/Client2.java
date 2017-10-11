@@ -2,6 +2,7 @@ package javarmi.client.core;
 
 import javarmi.core.Config;
 import javarmi.core.Service;
+import javarmi.core.Util;
 import javarmi.core.model.News;
 import javarmi.core.model.Topic;
 
@@ -12,7 +13,7 @@ public class Client2 {
     public static void main(String[] args) throws Exception {
         Config c = Config.getInstance();
 
-        Service service = (Service) Naming.lookup(Service.REMOTE_BINDING);
+        Service service = (Service) Naming.lookup(Util.getRemoteBinding());
         QueueConsumer queueConsumer = new QueueConsumer(c.getRabbitHost(), c.getRabbitUser(), c.getRabbitPassword());
         queueConsumer.consume("client2", System.out::println);
 
