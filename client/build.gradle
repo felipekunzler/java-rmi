@@ -5,4 +5,5 @@ mainClassName = 'javarmi.client.core.Client'
 dependencies {
     compile project(':core')
     compile "com.rabbitmq:amqp-client:$rabbitmqVersion"
+    compile group: 'com.jfoenix', name: 'jfoenix', version: '1.9.1'
 }
