@@ -5,6 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Util {
 
@@ -21,8 +24,21 @@ public class Util {
         }
     }
 
+    public static <T> T rethrow(ExceptionalSupplier<T> s) {
+        try {
+            return s.get();
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public interface ExceptionalRunnable {
         void run() throws Exception;
+    }
+
+    public interface ExceptionalSupplier<T> {
+        T get() throws Exception;
     }
 
     public static byte[] serialize(Object obj) throws IOException {

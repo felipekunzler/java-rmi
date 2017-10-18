@@ -44,8 +44,8 @@ public class DefaultService extends UnicastRemoteObject implements Service {
         }
     }
 
-    @Override // publisher
-    public List<Topic> getTopics(String password) {
+    @Override // subscriber
+    public List<Topic> getTopics() {
         return Collections.unmodifiableList(topics);
     }
 

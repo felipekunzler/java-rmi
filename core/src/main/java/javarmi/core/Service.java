@@ -14,7 +14,7 @@ public interface Service extends Remote {
     String REMOTE_BINDING = "rmiServiceServer";
 
     void addTopic(Topic topic, String password) throws RemoteException;
-    List<Topic> getTopics(String password) throws RemoteException;
+    List<Topic> getTopics() throws RemoteException;
 
     void subscribeTopic(String topicName, String subscriber) throws RemoteException;
 
