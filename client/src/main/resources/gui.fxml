@@ -2,10 +2,14 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXRadioButton?>
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -13,24 +17,24 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane id="container" fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="486.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javarmi.client.ui.Controller">
+<AnchorPane id="container" fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="687.0" prefWidth="1064.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javarmi.client.ui.Controller">
    <children>
-      <AnchorPane id="menu" fx:id="menu" layoutX="54.0" layoutY="41.0" prefHeight="83.0" prefWidth="378.0" style="-fx-background-color: #8e8e8e;">
+      <AnchorPane id="menu" fx:id="menu" layoutX="54.0" layoutY="41.0" prefHeight="83.0" prefWidth="948.0" style="-fx-background-color: #8e8e8e;" visible="false">
          <children>
-            <ImageView fx:id="btn_topics" layoutX="14.0" layoutY="18.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@/images/topics.png" />
-               </image>
+            <ImageView fx:id="btn_topics" layoutX="114.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
                <effect>
                   <DropShadow offsetY="2.0" radius="7.25" width="10.0" />
                </effect>
-            </ImageView>
-            <ImageView fx:id="btn_news" layoutX="116.0" layoutY="18.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@/images/news.png" />
+                  <Image url="@images/topics.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="btn_news" layoutX="336.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/news.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -39,9 +43,9 @@
                   <DropShadow height="15.5" offsetY="2.0" radius="5.875" width="10.0" />
                </effect>
             </ImageView>
-            <ImageView fx:id="btn_news_details" layoutX="217.0" layoutY="18.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="btn_news_details" layoutX="577.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@/images/news_details.png" />
+                  <Image url="@images/news_details.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -50,9 +54,9 @@
                   <DropShadow height="15.5" offsetY="2.0" radius="5.875" width="10.0" />
                </effect>
             </ImageView>
-            <ImageView fx:id="btn_notifications" layoutX="316.0" layoutY="18.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="btn_notifications" layoutX="804.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@/images/notification.png" />
+                  <Image url="@images/notification.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -62,76 +66,168 @@
                </effect>
             </ImageView>
          </children>
+         <effect>
+            <DropShadow offsetY="3.0" />
+         </effect>
       </AnchorPane>
-      <AnchorPane id="content" fx:id="content" layoutX="54.0" layoutY="132.0" prefHeight="364.0" prefWidth="378.0" style="-fx-background-color: #8e8e8e;" />
-      <AnchorPane id="topics" fx:id="topics" layoutX="54.0" layoutY="132.0" prefHeight="364.0" prefWidth="378.0">
-         <children>
-            <JFXListView id="topics_list" fx:id="topics_listview" layoutX="25.0" layoutY="45.0" prefHeight="257.0" prefWidth="330.0" style="-fx-background-color: transparent;" verticalGap="20.0" />
-            <Text fill="WHITE" layoutX="14.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Topics" wrappingWidth="54.13671875">
-               <font>
-                  <Font name="System Bold" size="15.0" />
+      <AnchorPane id="content" fx:id="content" layoutX="54.0" layoutY="132.0" prefHeight="518.0" prefWidth="948.0" style="-fx-background-color: #8e8e8e;">
+         <effect>
+            <DropShadow offsetY="3.0" />
+         </effect></AnchorPane>
+      <AnchorPane id="login" fx:id="login" layoutX="54.0" layoutY="133.0" prefHeight="518.0" prefWidth="948.0">
+          <children>
+              <JFXTextField fx:id="tb_user" focusColor="WHITE" labelFloat="true" layoutX="354.0" layoutY="141.0" prefHeight="25.0" prefWidth="240.0" promptText="User" style="-jfx-focus-color: #FFFFFF;">
+                  <font>
+                      <Font name="System Bold" size="12.0" />
+                  </font>
+                  <cursor>
+                      <Cursor fx:constant="HAND" />
+                  </cursor>
+              </JFXTextField>
+              <JFXPasswordField fx:id="tb_password" focusColor="WHITE" labelFloat="true" layoutX="354.0" layoutY="202.0" prefHeight="25.0" prefWidth="240.0" promptText="Password">
+                  <font>
+                      <Font name="System Bold" size="12.0" />
+                  </font>
+                  <cursor>
+                      <Cursor fx:constant="HAND" />
+                  </cursor>
+              </JFXPasswordField>
+              <JFXRadioButton fx:id="rb_writer" layoutX="341.0" layoutY="282.0" style="-jfx-selected-color: #FFFFFF;" text="Writer">
+                  <font>
+                      <Font name="System Bold" size="12.0" />
+                  </font>
+                  <cursor>
+                      <Cursor fx:constant="HAND" />
+                  </cursor>
+               <toggleGroup>
+                      <ToggleGroup fx:id="USER_TYPE" />
+               </toggleGroup>
+              </JFXRadioButton>
+              <JFXRadioButton fx:id="rb_subscriber" layoutX="413.0" layoutY="282.0" style="-jfx-selected-color: #FFFFFF;" text="Subscriber" toggleGroup="$USER_TYPE">
+                  <font>
+                      <Font name="System Bold" size="12.0" />
+                  </font>
+                  <cursor>
+                      <Cursor fx:constant="HAND" />
+                  </cursor>
+              </JFXRadioButton>
+              <JFXRadioButton fx:id="rb_guest" layoutX="518.0" layoutY="282.0" style="-jfx-selected-color: #FFFFFF;" text="Guest" toggleGroup="$USER_TYPE">
+                  <font>
+                      <Font name="System Bold" size="12.0" />
+                  </font>
+                  <cursor>
+                      <Cursor fx:constant="HAND" />
+                  </cursor>
+              </JFXRadioButton>
+              <JFXButton fx:id="btn_login" buttonType="RAISED" layoutX="409.0" layoutY="350.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="130.0" style="-fx-background-color: #FFFFFF;" text="Login">
+                  <cursor>
+                      <Cursor fx:constant="HAND" />
+                  </cursor>
+              </JFXButton>
+              <Text fill="WHITE" layoutX="308.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NewsFeed" textAlignment="CENTER" wrappingWidth="332.96875">
+                  <font>
+                  <Font size="48.0" />
                </font>
+               <effect>
+                  <DropShadow offsetY="3.0" />
+               </effect>
             </Text>
-            <JFXTextField focusColor="#ebebeb" labelFloat="true" layoutX="25.0" layoutY="314.0" prefHeight="25.0" prefWidth="228.0" promptText="Topic Name" style="-jfx-focus-color: #FFFFFF;">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></JFXTextField>
-            <JFXButton buttonType="RAISED" layoutX="267.0" layoutY="314.0" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #FFFFFF;" text="Add" />
          </children>
       </AnchorPane>
-      <AnchorPane id="news" fx:id="news" layoutX="54.0" layoutY="132.0" prefHeight="364.0" prefWidth="378.0" visible="false">
+      <AnchorPane id="topics" fx:id="topics" layoutX="54.0" layoutY="132.0" prefHeight="518.0" prefWidth="948.0" visible="false">
          <children>
-            <JFXListView id="news_list" fx:id="news_listview" layoutX="25.0" layoutY="45.0" prefHeight="159.0" prefWidth="330.0" style="-fx-background-color: transparent;" />
-            <Text fill="WHITE" layoutX="14.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News" wrappingWidth="54.13671875">
+            <JFXListView id="topics_list" fx:id="lv_topics" layoutX="25.0" layoutY="75.0" prefHeight="385.0" prefWidth="892.0" style="-fx-background-color: transparent;" verticalGap="20.0" />
+            <Text fill="WHITE" layoutX="25.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Topics" wrappingWidth="105.13671875">
                <font>
-                  <Font name="System Bold" size="15.0" />
+                  <Font name="System Bold" size="25.0" />
                </font>
             </Text>
-            <JFXTextArea focusColor="#ebebeb" labelFloat="true" layoutX="25.0" layoutY="278.0" prefHeight="66.0" prefWidth="330.0" promptText="News Content" style="-fx-background-color: transparent; -jfx-focus-color: #FFFFFF;">
+            <JFXTextField fx:id="tb_topicName" focusColor="#ebebeb" labelFloat="true" layoutX="25.0" layoutY="479.0" prefHeight="25.0" prefWidth="794.0" promptText="Topic Name" style="-jfx-focus-color: #FFFFFF;">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
-            </JFXTextArea>
-            <JFXTextField focusColor="#ebebeb" labelFloat="true" layoutX="25.0" layoutY="230.0" prefHeight="25.0" prefWidth="228.0" promptText="News Title" style="-jfx-focus-color: #FFFFFF;">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </JFXTextField>
-            <JFXButton buttonType="RAISED" layoutX="268.0" layoutY="230.0" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #FFFFFF;" text="Add" />
-            <JFXToggleButton contentDisplay="RIGHT" layoutX="240.0" layoutY="-5.0" prefHeight="0.0" prefWidth="130.0" text="Subscriber" textFill="WHITE" toggleColor="#048f00" toggleLineColor="#999999">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </JFXToggleButton>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></JFXTextField>
+            <JFXButton fx:id="btn_addTopic" buttonType="RAISED" layoutX="830.0" layoutY="479.0" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #FFFFFF;" text="Add">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></JFXButton>
          </children>
       </AnchorPane>
-      <AnchorPane id="news_details" fx:id="news_details" layoutX="54.0" layoutY="133.0" prefHeight="364.0" prefWidth="378.0" visible="false">
+      <AnchorPane id="news" fx:id="news" layoutX="54.0" layoutY="132.0" prefHeight="518.0" prefWidth="948.0" visible="false">
          <children>
-            <Text fill="WHITE" layoutX="14.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News Details" wrappingWidth="113.13671875">
+            <JFXListView id="news_list" fx:id="lv_news" layoutX="25.0" layoutY="75.0" prefHeight="299.0" prefWidth="892.0" style="-fx-background-color: transparent;" />
+            <Text fill="WHITE" layoutX="25.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News" wrappingWidth="99.0">
                <font>
-                  <Font name="System Bold" size="15.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Text>
-            <Text layoutX="132.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News Title" textAlignment="CENTER" wrappingWidth="113.13671875">
+             <JFXToggleButton fx:id="tg_subscriber" layoutX="248.0" layoutY="2.0" prefHeight="0.0" prefWidth="130.0" text="Subscriber" textFill="WHITE" toggleColor="#048f00" toggleLineColor="#999999">
+                 <font>
+                     <Font name="System Bold" size="12.0" />
+                 </font>
+                 <cursor>
+                     <Cursor fx:constant="HAND" />
+                 </cursor>
+             </JFXToggleButton>
+             <DatePicker fx:id="dp_initialDate" layoutX="572.0" layoutY="19.0" prefHeight="25.0" prefWidth="169.0" promptText="Initial Date">
+                 <cursor>
+                     <Cursor fx:constant="HAND" />
+                 </cursor></DatePicker>
+             <DatePicker fx:id="dp_finalDate" layoutX="748.0" layoutY="19.0" prefHeight="25.0" prefWidth="169.0" promptText="Final Date">
+                 <cursor>
+                     <Cursor fx:constant="HAND" />
+                 </cursor></DatePicker>
+             <JFXTextField fx:id="tb_newsTitle" focusColor="#ebebeb" labelFloat="true" layoutX="25.0" layoutY="394.0" prefHeight="25.0" prefWidth="794.0" promptText="News Title" style="-jfx-focus-color: #FFFFFF;">
+                 <font>
+                     <Font name="System Bold" size="12.0" />
+                 </font>
+                 <cursor>
+                     <Cursor fx:constant="HAND" />
+                 </cursor>
+             </JFXTextField>
+             <JFXTextArea fx:id="ta_newsContent" focusColor="#ebebeb" labelFloat="true" layoutX="25.0" layoutY="446.0" prefHeight="58.0" prefWidth="892.0" promptText="News Content" style="-fx-background-color: transparent; -jfx-focus-color: #FFFFFF;">
+                 <font>
+                     <Font name="System Bold" size="12.0" />
+                 </font>
+                 <cursor>
+                     <Cursor fx:constant="HAND" />
+                 </cursor>
+             </JFXTextArea>
+             <JFXButton fx:id="btn_addNews" buttonType="RAISED" layoutX="830.0" layoutY="394.0" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #FFFFFF;" text="Add">
+                 <cursor>
+                   <Cursor fx:constant="HAND" />
+               </cursor></JFXButton>
+            <Text fx:id="txt_topicName" fill="WHITE" layoutX="25.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Topic Name (Sport)" wrappingWidth="292.0">
                <font>
-                  <Font size="24.0" />
+                  <Font name="System Bold" size="25.0" />
                </font>
             </Text>
-            <Text fill="#3c3c3c" layoutX="24.0" layoutY="90.0" strokeType="INSIDE" strokeWidth="0.0" text="News Content lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius massa in quam mattis pretium. Praesent luctus nulla nisl, et lacinia turpis sagittis et. Donec vitae quam ante. Vivamus efficitur id quam auctor ultricies. Sed sagittis, diam egestas porttitor finibus, ipsum velit vehicula metus, vel molestie enim eros vel risus. Sed finibus eros non nisi venenatis, ut molestie purus varius. Curabitur faucibus nisl ac orci congue, in gravida ante maximus. Nunc sit amet odio cursus, placerat libero vitae, rutrum lorem. Ut varius vitae augue nec laoreet. Cras sed nunc ornare, venenatis orci ac, suscipit mi. Praesent ut felis iaculis tortor sagittis ultricies at sit amet felis." textAlignment="JUSTIFY" wrappingWidth="330.0">
+         </children>
+      </AnchorPane>
+      <AnchorPane id="news_details" fx:id="news_details" layoutX="54.0" layoutY="133.0" prefHeight="518.0" prefWidth="948.0" visible="false">
+         <children>
+            <Text fx:id="txt_newsTitle" fill="WHITE" layoutX="23.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News Title" wrappingWidth="766.0">
+               <font>
+                  <Font name="System Bold" size="25.0" />
+               </font>
+            </Text>
+            <Text fx:id="txt_newsContent" fill="#3c3c3c" layoutX="24.0" layoutY="95.0" strokeType="INSIDE" strokeWidth="0.0" text="News Content lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius massa in quam mattis pretium. Praesent luctus nulla nisl, et lacinia turpis sagittis et. Donec vitae quam ante. Vivamus efficitur id quam auctor ultricies. Sed sagittis, diam egestas porttitor finibus, ipsum velit vehicula metus, vel molestie enim eros vel risus. Sed finibus eros non nisi venenatis, ut molestie purus varius. Curabitur faucibus nisl ac orci congue, in gravida ante maximus. Nunc sit amet odio cursus, placerat libero vitae, rutrum lorem. Ut varius vitae augue nec laoreet. Cras sed nunc ornare, venenatis orci ac, suscipit mi. Praesent ut felis iaculis tortor sagittis ultricies at sit amet felis." textAlignment="JUSTIFY" wrappingWidth="892.0">
                <font>
                   <Font size="14.0" />
                </font>
             </Text>
          </children>
       </AnchorPane>
-      <AnchorPane id="notification" fx:id="notifications" layoutX="54.0" layoutY="132.0" prefHeight="364.0" prefWidth="378.0">
+      <AnchorPane id="notification" fx:id="notifications" layoutX="54.0" layoutY="132.0" prefHeight="518.0" prefWidth="948.0" visible="false">
          <children>
-            <Text fill="WHITE" layoutX="14.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Notifications" wrappingWidth="113.13671875">
+            <Text fill="WHITE" layoutX="23.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="My Feed" wrappingWidth="766.0">
                <font>
-                  <Font name="System Bold" size="15.0" />
+                  <Font name="System Bold" size="25.0" />
                </font>
             </Text>
-            <JFXListView fx:id="notification_listview" layoutX="25.0" layoutY="45.0" prefHeight="301.0" prefWidth="330.0" style="-fx-background-color: transparent;" />
+            <JFXListView fx:id="lv_notification" layoutX="25.0" layoutY="75.0" prefHeight="395.0" prefWidth="892.0" style="-fx-background-color: transparent;" />
          </children>
       </AnchorPane>
    </children>
