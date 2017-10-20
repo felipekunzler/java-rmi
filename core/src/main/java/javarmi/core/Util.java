@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class Util {
 
     public static String getRemoteBinding() {
-        return "//" + Config.getInstance().getRabbitHost() + "/" + Service.REMOTE_BINDING;
+        return "//" + Config.getRabbitHost()+ "/" + Service.REMOTE_BINDING;
     }
 
     public static void rethrow(ExceptionalRunnable r) {

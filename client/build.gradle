@@ -7,3 +7,8 @@ dependencies {
     compile "com.rabbitmq:amqp-client:$rabbitmqVersion"
     compile group: 'com.jfoenix', name: 'jfoenix', version: '1.9.1'
 }
+
+applicationDistribution.from("src/main/resources/default.properties") {
+    into "lib"
+    rename ('default.properties', 'config.properties')
+}

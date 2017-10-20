@@ -1,7 +1,9 @@
 package javarmi.core;
 
+import org.apache.commons.configuration2.CompositeConfiguration;
 import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ConfigurationUtils;
+import org.apache.commons.configuration2.ImmutableConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
@@ -9,37 +11,45 @@ import java.io.File;
 
 public class Config {
 
-    private static final Config config = new Config();
-    private Configuration configuration;
+    private static ImmutableConfiguration configuration;
 
     private Config() {
+    }
+
+    public static ImmutableConfiguration getConfig() {
+        if (configuration == null) {
+            CompositeConfiguration compositeConfig = new CompositeConfiguration();
+            addConfiguration(compositeConfig, "config.properties");
+            addConfiguration(compositeConfig, "default.properties");
+            configuration = ConfigurationUtils.unmodifiableConfiguration(compositeConfig);
+        }
+        return configuration;
+    }
+
+    private static void addConfiguration(CompositeConfiguration compositeConfiguration, String file) {
+        Configurations configurations = new Configurations();
         try {
-            Configurations conf = new Configurations();
-            configuration = conf.properties(new File("config.properties"));
+            Configuration defaultConfig = configurations.properties(new File(file));
+            compositeConfiguration.addConfiguration(defaultConfig);
         }
         catch (ConfigurationException e) {
-            configuration = new PropertiesConfiguration();
         }
     }
 
-    public static Config getInstance() {
-        return config;
+    public static String getRabbitHost() {
+        return getConfig().getString("rabbitmq.serverhost");
     }
 
-    public String getRabbitHost() {
-        return configuration.getString("rabbitmq.serverhost", "localhost");
+    public static String getRabbitUser() {
+        return getConfig().getString("rabbitmq.username");
     }
 
-    public String getRabbitUser() {
-        return configuration.getString("rabbitmq.username", "admin");
+    public static String getRabbitPassword() {
+        return getConfig().getString("rabbitmq.password");
     }
 
-    public String getRabbitPassword() {
-        return configuration.getString("rabbitmq.password", "admin");
-    }
-
-    public int getMaxNews() {
-        return configuration.getInt("rmi.maxNewsPerTopic", 5);
+    public static int getMaxNews() {
+        return getConfig().getInt("rmi.maxNewsPerTopic");
     }
 
 }

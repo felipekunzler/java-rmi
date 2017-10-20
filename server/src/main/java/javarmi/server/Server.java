@@ -14,13 +14,12 @@ public class Server {
     }
 
     public void start() {
-        Config c = Config.getInstance();
         try {
             // Call rmiregistry with the Service interface on the classpath first.
             // rmiregistry -J-classpath -J/java-rmi/core/out/production/classes
             // RabbitMQ server also need to be running: rabbitmq-server
-            MessageQueueing mq = new MessageQueueing(c.getRabbitHost(), c.getRabbitUser(), c.getRabbitPassword());
-            Service service = new DefaultService(mq, c.getMaxNews());
+            MessageQueueing mq = new MessageQueueing(Config.getRabbitHost(), Config.getRabbitUser(), Config.getRabbitPassword());
+            Service service = new DefaultService(mq, Config.getMaxNews());
             Naming.rebind(Service.REMOTE_BINDING, service);
         }
         catch (Exception e) {

@@ -6,3 +6,8 @@ dependencies {
     compile project(':core')
     compile "com.rabbitmq:amqp-client:$rabbitmqVersion"
 }
+
+applicationDistribution.from("src/main/resources/default.properties") {
+    into "lib"
+    rename ('default.properties', 'config.properties')
+}
