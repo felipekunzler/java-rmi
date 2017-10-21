@@ -24,4 +24,6 @@ public interface Service extends Remote {
     List<News> getNews(String password) throws RemoteException;
     List<News> getNews(LocalDateTime start, LocalDateTime end, String topicName) throws RemoteException;
 
+    boolean checkPassword(String password) throws RemoteException;
+
 }

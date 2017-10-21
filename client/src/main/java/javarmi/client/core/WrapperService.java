@@ -45,4 +45,8 @@ public class WrapperService {
         return rethrow(() -> service.getNews(start, end, topicName));
     }
 
+    public boolean checkPassword(String password) {
+        return rethrow(() -> service.checkPassword(password));
+    }
+
 }

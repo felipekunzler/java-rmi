@@ -77,6 +77,7 @@ public class Controller implements Initializable {
 
     private WrapperService service;
     private QueueConsumer queueConsumer;
+    private User user;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -84,7 +85,6 @@ public class Controller implements Initializable {
         service = lookupService();
 
         btn_login.setOnMouseClicked(e -> {
-            clearWindow();
             login();
         });
         btn_topics.setOnMouseClicked(e -> {
@@ -107,6 +107,16 @@ public class Controller implements Initializable {
                 txt_newsContent.setText(news.getFormattedContent());
                 showNewsDetails();
             }
+        });
+        toggleGroup(rb_guest, true, true);
+        toggleGroup(rb_subscriber, false, true);
+        toggleGroup(rb_writer, false, false);
+    }
+
+    private void toggleGroup(JFXRadioButton rb, boolean disableUser, boolean disablePassword) {
+        rb.setOnMouseClicked(e -> {
+            tb_password.setDisable(disablePassword);
+            tb_user.setDisable(disableUser);
         });
     }
 
@@ -131,8 +141,8 @@ public class Controller implements Initializable {
                 news.setTopicName(selectedItem.getText());
                 news.setTitle(title);
                 news.setContent(content);
-                news.setPublisher("who am I"); // TODO
-                service.addNews(news, "SEGREDO"); // TODO
+                news.setPublisher(user.getUser());
+                service.addNews(news, user.getPassword());
                 updateNews();
                 cb_topic.getSelectionModel().clearSelection();
                 tb_newsTitle.clear();
@@ -176,15 +186,23 @@ public class Controller implements Initializable {
     }
 
     private void login() {
+        String user = tb_user.getText();
+        String pass = tb_password.getText();
         if (rb_writer.isSelected()) {
+            if (StringUtils.isAnyBlank(user, pass) || !service.checkPassword(pass)) return;
+            this.user = new User(user, pass, User.Group.WRITER);
             userWriter();
         }
         else if (rb_subscriber.isSelected()) {
+            if (StringUtils.isBlank(user)) return;
+            this.user = new User(user, pass, User.Group.SUBSCRIBER);
             userSubscriber();
         }
         else {
+            this.user = new User(user, pass, User.Group.GUEST);
             userGuest();
         }
+        clearWindow();
         menu.setVisible(true);
         showTopics();
     }

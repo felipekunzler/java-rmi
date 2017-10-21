@@ -37,7 +37,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
 
     @Override // publisher
     public synchronized void addTopic(Topic topic, String password) {
-        checkPassword(password);
+        assertPassword(password);
         log.info("New topic created {}", topic.getName());
         if (!topics.contains(topic)) {
             topics.add(topic);
@@ -65,7 +65,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
 
     @Override // publisher
     public synchronized void addNews(News aNews, String password) {
-        checkPassword(password);
+        assertPassword(password);
         Optional<Topic> topic = getTopic(aNews.getTopicName());
         if (topic.isPresent()) {
             releaseNewsIfFull(aNews.getTopicName());
@@ -112,7 +112,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
 
     @Override // publisher
     public List<News> getNews(String password) {
-        checkPassword(password);
+        assertPassword(password);
         return Collections.unmodifiableList(news);
     }
 
@@ -128,8 +128,13 @@ public class DefaultService extends UnicastRemoteObject implements Service {
                 .collect(Collectors.toList());
     }
 
-    private void checkPassword(String password) {
-        if (!SECRET.equals(password)) {
+    @Override
+    public boolean checkPassword(String password) {
+        return SECRET.equals(password);
+    }
+
+    private void assertPassword(String password) {
+        if (!checkPassword(password)) {
             throw new JavaRMIException("Invalid credentials");
         }
     }

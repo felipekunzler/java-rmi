@@ -93,7 +93,7 @@
                       <Cursor fx:constant="HAND" />
                   </cursor>
               </JFXPasswordField>
-              <JFXRadioButton fx:id="rb_writer" layoutX="341.0" layoutY="282.0" style="-jfx-selected-color: #FFFFFF;" text="Writer">
+              <JFXRadioButton fx:id="rb_writer" layoutX="341.0" layoutY="282.0" selected="true" style="-jfx-selected-color: #FFFFFF;" text="Writer">
                   <font>
                       <Font name="System Bold" size="12.0" />
                   </font>
