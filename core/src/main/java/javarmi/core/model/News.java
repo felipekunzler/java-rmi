@@ -2,6 +2,7 @@ package javarmi.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class News implements Serializable {
 
@@ -32,6 +33,10 @@ public class News implements Serializable {
 
     public LocalDateTime getDate() {
         return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public String getTopicName() {

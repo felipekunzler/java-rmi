@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 public class DefaultService extends UnicastRemoteObject implements Service {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultService.class);
-    private static final String SECRET = "SEGREDO";
     private final int maxNewsPerTopic;
+    public static final String SECRET = "SEGREDO";
 
     private MessageQueueing messageQueueing;
 
@@ -63,12 +63,25 @@ public class DefaultService extends UnicastRemoteObject implements Service {
         }
     }
 
+
+    @Override // subscriber
+    public synchronized void unsubscribeTopic(String topicName, String subscriber) {
+        Optional<Topic> topic = getTopic(topicName);
+        if (topic.isPresent()) {
+            topic.get().getSubscribers().remove(subscriber);
+            messageQueueing.unbind(subscriber, topicName);
+        }
+        else {
+            throw new JavaRMIException("Adding news to non existing topic");
+        }
+    }
+
     @Override // publisher
     public synchronized void addNews(News aNews, String password) {
         assertPassword(password);
         Optional<Topic> topic = getTopic(aNews.getTopicName());
         if (topic.isPresent()) {
-            releaseNewsIfFull(aNews.getTopicName());
+            releaseNewsIfFull(aNews.getTopicName()); // TODO: no need!
             news.add(aNews);
             messageQueueing.publish(aNews);
         }

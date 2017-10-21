@@ -165,7 +165,7 @@
                   <Font name="System Bold" size="16.0" />
                </font>
             </Text>
-             <JFXToggleButton fx:id="tg_subscriber" layoutX="442.0" layoutY="4.0" prefHeight="0.0" prefWidth="130.0" text="Subscriber" textFill="WHITE" toggleColor="#048f00" toggleLineColor="#999999">
+             <JFXToggleButton fx:id="tg_subscriber" disable="true" layoutX="435.0" layoutY="4.0" prefHeight="58.0" prefWidth="137.0" text="Subscriber" textFill="WHITE" toggleColor="#048f00" toggleLineColor="#999999">
                  <font>
                      <Font name="System Bold" size="12.0" />
                  </font>
@@ -201,11 +201,16 @@
                  <cursor>
                    <Cursor fx:constant="HAND" />
                </cursor></JFXButton>
-             <Text fx:id="txt_topicName" fill="WHITE" layoutX="25.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Topic name: " wrappingWidth="292.0">
+             <Text fx:id="txt_topicNameLabel" fill="WHITE" layoutX="25.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Topic name: " wrappingWidth="292.0">
                <font>
                   <Font name="System Bold" size="25.0" />
                </font>
             </Text>
+             <Text fx:id="txt_topicName" fill="WHITE" layoutX="182.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" " wrappingWidth="292.0">
+                 <font>
+                     <Font name="System Bold" size="25.0" />
+                 </font>
+             </Text>
             <JFXComboBox fx:id="cb_topic" focusColor="#ebebeb" labelFloat="true" layoutX="726.0" layoutY="393.0" prefHeight="27.0" prefWidth="194.0" promptText="News Topic" style="-fx-background-color: transparent; -jfx-focus-color: #FFFFFF;" />
          </children>
       </AnchorPane>

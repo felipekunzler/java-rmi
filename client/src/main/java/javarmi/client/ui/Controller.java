@@ -24,17 +24,20 @@ import javarmi.core.Service;
 import javarmi.core.Util;
 import javarmi.core.model.News;
 import javarmi.core.model.Topic;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.Naming;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
-
-    @FXML
-    private JFXDatePicker final_date, initial_date;
 
     @FXML
     private ImageView btn_topics, btn_news, btn_news_details, btn_notifications;
@@ -70,7 +73,7 @@ public class Controller implements Initializable {
     private JFXRadioButton rb_writer, rb_subscriber, rb_guest;
 
     @FXML
-    private Text txt_newsContent, txt_newsTitle, txt_topicName, txt_topicNews;
+    private Text txt_newsContent, txt_newsTitle, txt_topicNameLabel, txt_topicNews, txt_topicName;
 
     @FXML
     private JFXComboBox<Label> cb_topic;
@@ -84,7 +87,7 @@ public class Controller implements Initializable {
         queueConsumer = new QueueConsumer(Config.getRabbitHost(), Config.getRabbitUser(), Config.getRabbitPassword());
         service = lookupService();
 
-        btn_login.setOnMouseClicked(e -> {
+        btn_login.setOnAction(e -> {
             login();
         });
         btn_topics.setOnMouseClicked(e -> {
@@ -92,7 +95,6 @@ public class Controller implements Initializable {
             showTopics();
         });
         btn_news.setOnMouseClicked(e -> {
-            clearWindow();
             showNews();
         });
         btn_news_details.setOnMouseClicked(e -> showNewsDetails());
@@ -108,6 +110,24 @@ public class Controller implements Initializable {
                 showNewsDetails();
             }
         });
+        lv_topics.setOnMouseClicked(e -> {
+            if (!user.isWriter() && e.getClickCount() == 2) {
+                String topic = lv_topics.getSelectionModel().getSelectedItem().getText();
+                txt_topicName.setText(topic);
+                tg_subscriber.setDisable(false);
+                showNews();
+            }
+        });
+        tg_subscriber.setOnAction(e -> {
+            if (tg_subscriber.isSelected()) {
+                service.subscribeTopic(txt_topicName.getText(), user.getUser());
+            }
+            else {
+                service.unsubscribeTopic(txt_topicName.getText(), user.getUser());
+            }
+        });
+        dp_initialDate.setOnAction(e -> updateNews());
+        dp_finalDate.setOnAction(e -> updateNews());
         toggleGroup(rb_guest, true, true);
         toggleGroup(rb_subscriber, false, true);
         toggleGroup(rb_writer, false, false);
@@ -124,7 +144,7 @@ public class Controller implements Initializable {
     public void onAddTopic() throws IOException {
         String topic = tb_topicName.getText();
         if (StringUtils.isNotBlank(topic)) {
-            service.addTopic(new Topic(topic), "SEGREDO");
+            service.addTopic(new Topic(topic), user.getPassword());
             updateTopics();
             tb_topicName.clear();
         }
@@ -159,20 +179,31 @@ public class Controller implements Initializable {
     }
 
     private void updateNews() {
-        // topics combo box
-        int selected = cb_topic.getSelectionModel().getSelectedIndex();
-        cb_topic.getItems().removeIf(i -> true);
-        for (Topic topic : service.getTopics()) {
-            cb_topic.getItems().add(new Label(topic.getName()));
+        List<News> newsList;
+        if (user.isWriter()) {
+            int selected = cb_topic.getSelectionModel().getSelectedIndex();
+            cb_topic.getItems().removeIf(i -> true);
+            for (Topic topic : service.getTopics()) {
+                cb_topic.getItems().add(new Label(topic.getName()));
+            }
+            if (!cb_topic.getItems().isEmpty()) {
+                cb_topic.getSelectionModel().select(selected);
+            }
+            newsList = service.getNews(user.getPassword());
         }
-        if (!cb_topic.getItems().isEmpty()) {
-            cb_topic.getSelectionModel().select(selected);
+        else {
+            LocalDateTime start = defaultIfNull(dp_initialDate, LocalDate.MIN).atStartOfDay();
+            LocalDateTime end = defaultIfNull(dp_finalDate, LocalDate.MAX).atTime(LocalTime.MAX);
+            newsList = service.getNews(start, end, txt_topicName.getText());
         }
-
         lv_news.getItems().removeIf(i -> true);
-        for (News news : service.getNews("SEGREDO")) {
+        for (News news : newsList) {
             lv_news.getItems().add(news);
         }
+    }
+
+    private LocalDate defaultIfNull(DatePicker dp, LocalDate defaultDate) {
+        return ObjectUtils.defaultIfNull(dp.getValue(), defaultDate);
     }
 
     private WrapperService lookupService() {
@@ -196,6 +227,7 @@ public class Controller implements Initializable {
         else if (rb_subscriber.isSelected()) {
             if (StringUtils.isBlank(user)) return;
             this.user = new User(user, pass, User.Group.SUBSCRIBER);
+            queueConsumer.consume(user, System.out::println);
             userSubscriber();
         }
         else {
@@ -213,6 +245,7 @@ public class Controller implements Initializable {
     }
 
     private void showNews() {
+        clearWindow();
         updateNews();
         news.setVisible(true);
     }
@@ -227,7 +260,7 @@ public class Controller implements Initializable {
     }
 
     private void userWriter() {
-        txt_topicName.setText("All News");
+        txt_topicNameLabel.setText("All News");
         hide(btn_notifications, tg_subscriber, dp_finalDate, dp_initialDate, txt_topicNews);
     }
 

@@ -28,6 +28,14 @@ public class MessageQueueing {
         });
     }
 
+    public void publish(News aNews) {
+        log.info("Publishing " + aNews);
+        Util.rethrow(() -> {
+            byte[] bytes = Util.serialize(aNews);
+            channel.basicPublish(EXCHANGE_NAME, aNews.getTopicName(), null, bytes);
+        });
+    }
+
     public void bind(String subscriber, String topic) {
         log.info("Binding subscriber [{}] to topic [{}]", subscriber, topic);
         Util.rethrow(() -> {
@@ -36,11 +44,10 @@ public class MessageQueueing {
         });
     }
 
-    public void publish(News aNews) {
-        log.info("Publishing " + aNews);
+    public void unbind(String subscriber, String topic) {
+        log.info("Unbinding subscriber [{}] from topic [{}]", subscriber, topic);
         Util.rethrow(() -> {
-            byte[] bytes = Util.serialize(aNews);
-            channel.basicPublish(EXCHANGE_NAME, aNews.getTopicName(), null, bytes);
+            channel.queueUnbind(subscriber, EXCHANGE_NAME, topic);
         });
     }
 
