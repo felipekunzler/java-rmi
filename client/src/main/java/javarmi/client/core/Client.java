@@ -22,12 +22,14 @@ public class Client {
         service.subscribeTopic("tech", "client1");
 
         News news = new News();
+        news.setTitle("1st news title");
         news.setContent("first news");
         news.setTopicName("tech");
         news.setPublisher("myself");
         service.addNews(news, "SEGREDO");
 
         News news2 = new News();
+        news2.setTitle("sports news title");
         news2.setContent("second news");
         news2.setTopicName("sports");
         news2.setPublisher("myself");

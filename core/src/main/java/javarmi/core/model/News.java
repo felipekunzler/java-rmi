@@ -6,8 +6,9 @@ import java.time.LocalDateTime;
 public class News implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final int MAX_CONTENT_SIZE = 180;
+    public static final int MAX_CONTENT_SIZE = 180;
 
+    private String title;
     private String content;
     private LocalDateTime date = LocalDateTime.now();
     private String topicName;
@@ -18,10 +19,15 @@ public class News implements Serializable {
     }
 
     public void setContent(String content) {
-        if (content.length() > MAX_CONTENT_SIZE) {
-            content = content.substring(MAX_CONTENT_SIZE);
-        }
         this.content = content;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public LocalDateTime getDate() {
@@ -44,14 +50,13 @@ public class News implements Serializable {
         this.publisher = publisher;
     }
 
+    public String getFormattedContent() {
+        return "Date: " + date + "\nPublisher: " +  publisher + "\nTopic: " + topicName + "\n\n" + content;
+    }
+
     @Override
     public String toString() {
-        return "News{" +
-                "content='" + content + '\'' +
-                ", date=" + date +
-                ", topicName='" + topicName + '\'' +
-                ", publisher='" + publisher + '\'' +
-                '}';
+        return title;
     }
 
 }

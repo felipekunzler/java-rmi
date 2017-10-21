@@ -1,17 +1,35 @@
 package javarmi.client.ui;
 
-import com.jfoenix.controls.*;
-import javafx.event.EventHandler;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXRadioButton;
+import com.jfoenix.controls.JFXTextArea;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXToggleButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import java.net.URL;
-import java.util.ResourceBundle;
-import javafx.scene.control.DatePicker;
 import javafx.scene.text.Text;
+import javarmi.client.core.QueueConsumer;
+import javarmi.client.core.WrapperService;
+import javarmi.core.Config;
+import javarmi.core.Service;
+import javarmi.core.Util;
+import javarmi.core.model.News;
+import javarmi.core.model.Topic;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
+import java.net.URL;
+import java.rmi.Naming;
+import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
@@ -19,7 +37,7 @@ public class Controller implements Initializable {
     private JFXDatePicker final_date, initial_date;
 
     @FXML
-    private ImageView  btn_topics, btn_news, btn_news_details, btn_notifications;
+    private ImageView btn_topics, btn_news, btn_news_details, btn_notifications;
 
     @FXML
     private JFXButton btn_login, btn_addTopic, btn_addNews;
@@ -28,7 +46,10 @@ public class Controller implements Initializable {
     private AnchorPane topics, news, news_details, notifications, content, menu, login;
 
     @FXML
-    private JFXListView<Label> lv_topics, lv_news, lv_notification;
+    private JFXListView<Label> lv_topics;
+
+    @FXML
+    private JFXListView<News> lv_news, lv_notification;
 
     @FXML
     private JFXTextField tb_topicName, tb_newsTitle, tb_user;
@@ -49,31 +70,137 @@ public class Controller implements Initializable {
     private JFXRadioButton rb_writer, rb_subscriber, rb_guest;
 
     @FXML
-    private Text txt_newsContent,txt_newsTitle,txt_topicName;
+    private Text txt_newsContent, txt_newsTitle, txt_topicName, txt_topicNews;
+
+    @FXML
+    private JFXComboBox<Label> cb_topic;
+
+    private WrapperService service;
+    private QueueConsumer queueConsumer;
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        queueConsumer = new QueueConsumer(Config.getRabbitHost(), Config.getRabbitUser(), Config.getRabbitPassword());
+        service = lookupService();
+
+        btn_login.setOnMouseClicked(e -> {
+            clearWindow();
+            login();
+        });
+        btn_topics.setOnMouseClicked(e -> {
+            clearWindow();
+            showTopics();
+        });
+        btn_news.setOnMouseClicked(e -> {
+            clearWindow();
+            showNews();
+        });
+        btn_news_details.setOnMouseClicked(e -> showNewsDetails());
+        btn_notifications.setOnMouseClicked(e -> {
+            clearWindow();
+            showNotifications();
+        });
+        lv_news.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                News news = lv_news.getSelectionModel().getSelectedItem();
+                txt_newsTitle.setText(news.getTitle());
+                txt_newsContent.setText(news.getFormattedContent());
+                showNewsDetails();
+            }
+        });
+    }
+
+    @FXML
+    public void onAddTopic() throws IOException {
+        String topic = tb_topicName.getText();
+        if (StringUtils.isNotBlank(topic)) {
+            service.addTopic(new Topic(topic), "SEGREDO");
+            updateTopics();
+            tb_topicName.clear();
+        }
+    }
+
+    @FXML
+    public void onAddNews() throws IOException {
+        Label selectedItem = cb_topic.getSelectionModel().getSelectedItem();
+        String title = tb_newsTitle.getText();
+        String content = ta_newsContent.getText();
+        if (StringUtils.isNotBlank(title) && StringUtils.isNotBlank(content) && selectedItem != null) {
+            if (title.length() + content.length() <= News.MAX_CONTENT_SIZE) {
+                News news = new News();
+                news.setTopicName(selectedItem.getText());
+                news.setTitle(title);
+                news.setContent(content);
+                news.setPublisher("who am I"); // TODO
+                service.addNews(news, "SEGREDO"); // TODO
+                updateNews();
+                cb_topic.getSelectionModel().clearSelection();
+                tb_newsTitle.clear();
+                ta_newsContent.clear();
+            }
+        }
+    }
+
+    private void updateTopics() {
+        lv_topics.getItems().removeIf(i -> true);
+        for (Topic topic : service.getTopics()) {
+            lv_topics.getItems().add(new Label(topic.getName()));
+        }
+    }
+
+    private void updateNews() {
+        // topics combo box
+        int selected = cb_topic.getSelectionModel().getSelectedIndex();
+        cb_topic.getItems().removeIf(i -> true);
+        for (Topic topic : service.getTopics()) {
+            cb_topic.getItems().add(new Label(topic.getName()));
+        }
+        if (!cb_topic.getItems().isEmpty()) {
+            cb_topic.getSelectionModel().select(selected);
+        }
+
+        lv_news.getItems().removeIf(i -> true);
+        for (News news : service.getNews("SEGREDO")) {
+            lv_news.getItems().add(news);
+        }
+    }
+
+    private WrapperService lookupService() {
+        try {
+            Service service = (Service) Naming.lookup(Util.getRemoteBinding());
+            return new WrapperService(service);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private void login() {
-        if (rb_writer.isSelected()){
+        if (rb_writer.isSelected()) {
             userWriter();
         }
-        if(rb_subscriber.isSelected()){
+        else if (rb_subscriber.isSelected()) {
             userSubscriber();
         }
-        if(rb_guest.isSelected()){
+        else {
             userGuest();
         }
         menu.setVisible(true);
-        topics.setVisible(true);
+        showTopics();
     }
 
     private void showTopics() {
+        updateTopics();
         topics.setVisible(true);
     }
 
     private void showNews() {
+        updateNews();
         news.setVisible(true);
     }
 
     private void showNewsDetails() {
+        clearWindow();
         news_details.setVisible(true);
     }
 
@@ -81,77 +208,27 @@ public class Controller implements Initializable {
         notifications.setVisible(true);
     }
 
-    private void userWriter(){
-        btn_notifications.setVisible(false);
-        tg_subscriber.setVisible(false);
-        dp_finalDate.setVisible(false); // ??? "Consultar todas as notícias publicadas."
-        dp_initialDate.setVisible(false); // ???
+    private void userWriter() {
+        txt_topicName.setText("All News");
+        hide(btn_notifications, tg_subscriber, dp_finalDate, dp_initialDate, txt_topicNews);
     }
 
-    private void userSubscriber(){
-        tb_topicName.setVisible(false);
-        btn_addTopic.setVisible(false);
-        ta_newsContent.setVisible(false);
-        tb_newsTitle.setVisible(false);
-        btn_addNews.setVisible(false);
+    private void userSubscriber() {
+        hide(tb_topicName, btn_addTopic, ta_newsContent, tb_newsTitle, btn_addNews, cb_topic);
     }
 
-    private void userGuest(){
-        btn_notifications.setVisible(false);
-        tb_topicName.setVisible(false);
-        btn_addTopic.setVisible(false);
-        tg_subscriber.setVisible(false);
-        ta_newsContent.setVisible(false);
-        tb_newsTitle.setVisible(false);
-        btn_addNews.setVisible(false);
+    private void userGuest() {
+        hide(btn_notifications, tb_topicName, btn_addTopic, tg_subscriber, ta_newsContent, tb_newsTitle, btn_addNews, cb_topic);
     }
 
-    private void clearWindow(){
-        login.setVisible(false);
-        topics.setVisible(false);
-        news.setVisible(false);
-        news_details.setVisible(false);
-        notifications.setVisible(false);
+    private void clearWindow() {
+        hide(login, topics, news, news_details, notifications);
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        btn_login.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                clearWindow();
-                login();
-            }
-        });
-        btn_topics.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                clearWindow();
-                showTopics();
-            }
-        });
-        btn_news.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                clearWindow();
-                showNews();
-            }
-        });
-        btn_news_details.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                clearWindow();
-                showNewsDetails();
-            }
-        });
-        btn_notifications.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                clearWindow();
-                showNotifications();
-            }
-        });
+    private void hide(Node... nodes) {
+        for (Node node : nodes) {
+            node.setVisible(false);
+        }
     }
-
 
 }

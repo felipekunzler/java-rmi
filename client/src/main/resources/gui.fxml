@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXRadioButton?>
@@ -74,7 +75,7 @@
          <effect>
             <DropShadow offsetY="3.0" />
          </effect></AnchorPane>
-      <AnchorPane id="login" fx:id="login" layoutX="54.0" layoutY="133.0" prefHeight="518.0" prefWidth="948.0">
+      <AnchorPane id="login" fx:id="login" layoutX="54.0" layoutY="133.0" prefHeight="518.0" prefWidth="948.0" visible="true">
           <children>
               <JFXTextField fx:id="tb_user" focusColor="WHITE" labelFloat="true" layoutX="354.0" layoutY="141.0" prefHeight="25.0" prefWidth="240.0" promptText="User" style="-jfx-focus-color: #FFFFFF;">
                   <font>
@@ -149,21 +150,22 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></JFXTextField>
-            <JFXButton fx:id="btn_addTopic" buttonType="RAISED" layoutX="830.0" layoutY="479.0" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #FFFFFF;" text="Add">
+            <JFXButton fx:id="btn_addTopic" buttonType="RAISED" layoutX="830.0" layoutY="479.0" onAction="#onAddTopic" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #FFFFFF;" text="Add">
                <cursor>
                   <Cursor fx:constant="HAND" />
-               </cursor></JFXButton>
+               </cursor>
+            </JFXButton>
          </children>
       </AnchorPane>
       <AnchorPane id="news" fx:id="news" layoutX="54.0" layoutY="132.0" prefHeight="518.0" prefWidth="948.0" visible="false">
          <children>
-            <JFXListView id="news_list" fx:id="lv_news" layoutX="25.0" layoutY="75.0" prefHeight="299.0" prefWidth="892.0" style="-fx-background-color: transparent;" />
-            <Text fill="WHITE" layoutX="25.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News" wrappingWidth="99.0">
+             <JFXListView id="news_list" fx:id="lv_news" layoutX="25.0" layoutY="75.0" prefHeight="299.0" prefWidth="892.0" style="-fx-background-color: transparent;" />
+             <Text fx:id="txt_topicNews" fill="WHITE" layoutX="25.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News" wrappingWidth="99.0">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </Text>
-             <JFXToggleButton fx:id="tg_subscriber" layoutX="248.0" layoutY="2.0" prefHeight="0.0" prefWidth="130.0" text="Subscriber" textFill="WHITE" toggleColor="#048f00" toggleLineColor="#999999">
+             <JFXToggleButton fx:id="tg_subscriber" layoutX="442.0" layoutY="4.0" prefHeight="0.0" prefWidth="130.0" text="Subscriber" textFill="WHITE" toggleColor="#048f00" toggleLineColor="#999999">
                  <font>
                      <Font name="System Bold" size="12.0" />
                  </font>
@@ -179,7 +181,7 @@
                  <cursor>
                      <Cursor fx:constant="HAND" />
                  </cursor></DatePicker>
-             <JFXTextField fx:id="tb_newsTitle" focusColor="#ebebeb" labelFloat="true" layoutX="25.0" layoutY="394.0" prefHeight="25.0" prefWidth="794.0" promptText="News Title" style="-jfx-focus-color: #FFFFFF;">
+             <JFXTextField fx:id="tb_newsTitle" focusColor="#ebebeb" labelFloat="true" layoutX="25.0" layoutY="394.0" prefHeight="25.0" prefWidth="666.0" promptText="News Title" style="-jfx-focus-color: #FFFFFF;">
                  <font>
                      <Font name="System Bold" size="12.0" />
                  </font>
@@ -187,7 +189,7 @@
                      <Cursor fx:constant="HAND" />
                  </cursor>
              </JFXTextField>
-             <JFXTextArea fx:id="ta_newsContent" focusColor="#ebebeb" labelFloat="true" layoutX="25.0" layoutY="446.0" prefHeight="58.0" prefWidth="892.0" promptText="News Content" style="-fx-background-color: transparent; -jfx-focus-color: #FFFFFF;">
+             <JFXTextArea fx:id="ta_newsContent" focusColor="#ebebeb" labelFloat="true" layoutX="25.0" layoutY="444.0" prefHeight="58.0" prefWidth="666.0" promptText="News Content" style="-fx-background-color: transparent; -jfx-focus-color: #FFFFFF;">
                  <font>
                      <Font name="System Bold" size="12.0" />
                  </font>
@@ -195,25 +197,26 @@
                      <Cursor fx:constant="HAND" />
                  </cursor>
              </JFXTextArea>
-             <JFXButton fx:id="btn_addNews" buttonType="RAISED" layoutX="830.0" layoutY="394.0" prefHeight="25.0" prefWidth="87.0" style="-fx-background-color: #FFFFFF;" text="Add">
+             <JFXButton fx:id="btn_addNews" buttonType="RAISED" layoutX="726.0" layoutY="463.0" onAction="#onAddNews" prefHeight="41.0" prefWidth="194.0" style="-fx-background-color: #FFFFFF;" text="Add">
                  <cursor>
                    <Cursor fx:constant="HAND" />
                </cursor></JFXButton>
-            <Text fx:id="txt_topicName" fill="WHITE" layoutX="25.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Topic Name (Sport)" wrappingWidth="292.0">
+             <Text fx:id="txt_topicName" fill="WHITE" layoutX="25.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Topic name: " wrappingWidth="292.0">
                <font>
                   <Font name="System Bold" size="25.0" />
                </font>
             </Text>
+            <JFXComboBox fx:id="cb_topic" focusColor="#ebebeb" labelFloat="true" layoutX="726.0" layoutY="393.0" prefHeight="27.0" prefWidth="194.0" promptText="News Topic" style="-fx-background-color: transparent; -jfx-focus-color: #FFFFFF;" />
          </children>
       </AnchorPane>
       <AnchorPane id="news_details" fx:id="news_details" layoutX="54.0" layoutY="133.0" prefHeight="518.0" prefWidth="948.0" visible="false">
          <children>
-            <Text fx:id="txt_newsTitle" fill="WHITE" layoutX="23.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News Title" wrappingWidth="766.0">
+            <Text fx:id="txt_newsTitle" fill="WHITE" layoutX="23.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News Details" wrappingWidth="766.0">
                <font>
                   <Font name="System Bold" size="25.0" />
                </font>
             </Text>
-            <Text fx:id="txt_newsContent" fill="#3c3c3c" layoutX="24.0" layoutY="95.0" strokeType="INSIDE" strokeWidth="0.0" text="News Content lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius massa in quam mattis pretium. Praesent luctus nulla nisl, et lacinia turpis sagittis et. Donec vitae quam ante. Vivamus efficitur id quam auctor ultricies. Sed sagittis, diam egestas porttitor finibus, ipsum velit vehicula metus, vel molestie enim eros vel risus. Sed finibus eros non nisi venenatis, ut molestie purus varius. Curabitur faucibus nisl ac orci congue, in gravida ante maximus. Nunc sit amet odio cursus, placerat libero vitae, rutrum lorem. Ut varius vitae augue nec laoreet. Cras sed nunc ornare, venenatis orci ac, suscipit mi. Praesent ut felis iaculis tortor sagittis ultricies at sit amet felis." textAlignment="JUSTIFY" wrappingWidth="892.0">
+            <Text fx:id="txt_newsContent" fill="#3c3c3c" layoutX="24.0" layoutY="95.0" strokeType="INSIDE" strokeWidth="0.0" text="Double click on a news to show its content." textAlignment="JUSTIFY" wrappingWidth="892.0">
                <font>
                   <Font size="14.0" />
                </font>
