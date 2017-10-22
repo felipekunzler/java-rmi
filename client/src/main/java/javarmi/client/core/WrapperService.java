@@ -29,6 +29,10 @@ public class WrapperService {
         rethrow(() -> service.subscribeTopic(topicName, subscriber));
     }
 
+    public boolean isSubscribed(String topicName, String subscriber) {
+        return rethrow(() -> service.isSubscribed(topicName, subscriber));
+    }
+
     public void unsubscribeTopic(String topicName, String subscriber) {
         rethrow(() -> service.unsubscribeTopic(topicName, subscriber));
     }

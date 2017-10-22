@@ -66,7 +66,7 @@ public class Controller implements Initializable {
     private JFXTextArea ta_newsContent;
 
     @FXML
-    private JFXToggleButton tg_subscriber; // TODO: create isSubscribed to load back
+    private JFXToggleButton tg_subscriber;
 
     @FXML
     private DatePicker dp_initialDate, dp_finalDate;
@@ -113,6 +113,7 @@ public class Controller implements Initializable {
                 String topic = lv_topics.getSelectionModel().getSelectedItem().getText();
                 txt_topicName.setText(topic);
                 tg_subscriber.setDisable(false);
+                tg_subscriber.setSelected(service.isSubscribed(topic, user.getUser()));
                 showNews();
             }
         });

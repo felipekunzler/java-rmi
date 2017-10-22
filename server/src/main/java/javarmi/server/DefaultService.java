@@ -61,8 +61,16 @@ public class DefaultService extends UnicastRemoteObject implements Service {
         }
     }
 
+    @Override
+    public boolean isSubscribed(String topicName, String subscriber) {
+        Optional<Topic> topic = getTopic(topicName);
+        if (topic.isPresent()) {
+            return topic.get().getSubscribers().contains(subscriber);
+        }
+        return false;
+    }
 
-    @Override // subscriber
+        @Override // subscriber
     public synchronized void unsubscribeTopic(String topicName, String subscriber) {
         Optional<Topic> topic = getTopic(topicName);
         if (topic.isPresent()) {

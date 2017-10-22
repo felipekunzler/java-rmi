@@ -1,6 +1,6 @@
 apply plugin: 'application'
 
-mainClassName = 'javarmi.client.core.Client'
+mainClassName = 'javarmi.client.ui.Main'
 
 dependencies {
     compile project(':core')

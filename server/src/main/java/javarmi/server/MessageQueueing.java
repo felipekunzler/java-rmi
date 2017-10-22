@@ -24,6 +24,7 @@ public class MessageQueueing {
             factory.setPassword(pass);
             Connection connection = factory.newConnection();
             channel = connection.createChannel();
+            channel.exchangeDelete(EXCHANGE_NAME);
             channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE);
         });
     }

@@ -18,6 +18,7 @@ public interface Service extends Remote {
 
     void subscribeTopic(String topicName, String subscriber) throws RemoteException;
     void unsubscribeTopic(String topicName, String subscriber) throws RemoteException;
+    boolean isSubscribed(String topicName, String subscriber) throws RemoteException;
 
     void addNews(News aNews, String password) throws RemoteException;
 
