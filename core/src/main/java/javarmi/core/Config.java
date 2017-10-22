@@ -52,4 +52,7 @@ public class Config {
         return getConfig().getInt("rmi.maxNewsPerTopic");
     }
 
+    public static String getPublisherSecret() {
+        return getConfig().getString("publisher.secret");
+    }
 }

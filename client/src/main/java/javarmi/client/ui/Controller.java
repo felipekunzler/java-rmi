@@ -2,13 +2,14 @@ package javarmi.client.ui;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -33,8 +34,9 @@ import java.rmi.Naming;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -46,7 +48,7 @@ public class Controller implements Initializable {
     private JFXButton btn_login, btn_addTopic, btn_addNews;
 
     @FXML
-    private AnchorPane topics, news, news_details, notifications, content, menu, login;
+    private AnchorPane topics, news, news_details, notifications, menu, login;
 
     @FXML
     private JFXListView<Label> lv_topics;
@@ -64,7 +66,7 @@ public class Controller implements Initializable {
     private JFXTextArea ta_newsContent;
 
     @FXML
-    private JFXToggleButton tg_subscriber;
+    private JFXToggleButton tg_subscriber; // TODO: create isSubscribed to load back
 
     @FXML
     private DatePicker dp_initialDate, dp_finalDate;
@@ -102,14 +104,10 @@ public class Controller implements Initializable {
             clearWindow();
             showNotifications();
         });
-        lv_news.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 2) {
-                News news = lv_news.getSelectionModel().getSelectedItem();
-                txt_newsTitle.setText(news.getTitle());
-                txt_newsContent.setText(news.getFormattedContent());
-                showNewsDetails();
-            }
-        });
+
+        handleNewsClicked(lv_news);
+        handleNewsClicked(lv_notification);
+
         lv_topics.setOnMouseClicked(e -> {
             if (!user.isWriter() && e.getClickCount() == 2) {
                 String topic = lv_topics.getSelectionModel().getSelectedItem().getText();
@@ -137,6 +135,27 @@ public class Controller implements Initializable {
         rb.setOnMouseClicked(e -> {
             tb_password.setDisable(disablePassword);
             tb_user.setDisable(disableUser);
+        });
+    }
+
+    private void handleNewsClicked(JFXListView<News> lv) {
+        lv.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                News news = lv.getSelectionModel().getSelectedItem();
+                txt_newsTitle.setText(news.getTitle());
+                txt_newsContent.setText(news.getFormattedContent());
+                showNewsDetails();
+            }
+        });
+    }
+
+    private void handleUpcomingNews(News news) {
+        Platform.runLater(() -> {
+            ObservableList<News> items = lv_notification.getItems();
+            if (items.size() >= Config.getMaxNews()) {
+                items.remove(items.size() - 1);
+            }
+            items.add(0, news);
         });
     }
 
@@ -227,7 +246,7 @@ public class Controller implements Initializable {
         else if (rb_subscriber.isSelected()) {
             if (StringUtils.isBlank(user)) return;
             this.user = new User(user, pass, User.Group.SUBSCRIBER);
-            queueConsumer.consume(user, System.out::println);
+            queueConsumer.consume(user, this::handleUpcomingNews);
             userSubscriber();
         }
         else {

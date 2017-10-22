@@ -22,7 +22,7 @@ public class Server {
             // rmiregistry -J-classpath -J/java-rmi/core/out/production/classes
             // RabbitMQ server also need to be running: rabbitmq-server
             MessageQueueing mq = new MessageQueueing(Config.getRabbitHost(), Config.getRabbitUser(), Config.getRabbitPassword());
-            Service service = new DefaultService(mq, Config.getMaxNews());
+            Service service = new DefaultService(mq, Config.getPublisherSecret());
             Naming.rebind(Service.REMOTE_BINDING, service);
             mockNews(service);
         }
@@ -32,7 +32,9 @@ public class Server {
     }
 
     private void mockNews(Service service) throws RemoteException {
-        service.addTopic(new Topic("Tech"), DefaultService.SECRET);
+        String secret = Config.getPublisherSecret();
+
+        service.addTopic(new Topic("Tech"), secret);
         News newsA = new News();
         newsA.setPublisher("Admin");
         newsA.setTopicName("Tech");
@@ -47,8 +49,8 @@ public class Server {
         newsB.setContent("Quo epicurei deterruisset ut, per vide soleat luptatum ex. In nec amet agam persecuti. Qui no unum pertinax repudiare.");
         newsB.setDate(LocalDateTime.now().minusDays(2));
 
-        service.addNews(newsA, DefaultService.SECRET);
-        service.addNews(newsB, DefaultService.SECRET);
+        service.addNews(newsA, secret);
+        service.addNews(newsB, secret);
     }
 
 }

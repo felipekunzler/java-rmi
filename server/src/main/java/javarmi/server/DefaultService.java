@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,17 +21,16 @@ import java.util.stream.Stream;
 public class DefaultService extends UnicastRemoteObject implements Service {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultService.class);
-    private final int maxNewsPerTopic;
-    public static final String SECRET = "SEGREDO";
 
     private MessageQueueing messageQueueing;
+    private String publisherSecret;
 
     private List<Topic> topics = new ArrayList<>();
     private List<News> news = new ArrayList<>();
 
-    public DefaultService(MessageQueueing messageQueueing, int maxNewsPerTopic) throws RemoteException {
+    public DefaultService(MessageQueueing messageQueueing, String publisherSecret) throws RemoteException {
         this.messageQueueing = messageQueueing;
-        this.maxNewsPerTopic = maxNewsPerTopic;
+        this.publisherSecret = publisherSecret;
     }
 
     @Override // publisher
@@ -81,7 +79,6 @@ public class DefaultService extends UnicastRemoteObject implements Service {
         assertPassword(password);
         Optional<Topic> topic = getTopic(aNews.getTopicName());
         if (topic.isPresent()) {
-            releaseNewsIfFull(aNews.getTopicName()); // TODO: no need!
             news.add(aNews);
             messageQueueing.publish(aNews);
         }
@@ -98,20 +95,6 @@ public class DefaultService extends UnicastRemoteObject implements Service {
         return Optional.empty();
     }
 
-    private void releaseNewsIfFull(String topicName) {
-        ListIterator<News> iterator = news.listIterator(news.size());
-        int count = 0;
-        while (iterator.hasPrevious()) {
-            News n = iterator.previous();
-            if (n.getTopicName().equals(topicName)) {
-                count++;
-            }
-            if (count == maxNewsPerTopic) {
-                iterator.remove();
-            }
-        }
-    }
-
     @Override // all
     public News getLastNews(String topicName) {
         for (int i = news.size() - 1; i >= 0; i--) {
@@ -126,7 +109,9 @@ public class DefaultService extends UnicastRemoteObject implements Service {
     @Override // publisher
     public List<News> getNews(String password) {
         assertPassword(password);
-        return Collections.unmodifiableList(news);
+        return news.stream()
+                .sorted(Comparator.comparing(News::getDate))
+                .collect(Collectors.toList());
     }
 
     @Override // all
@@ -143,7 +128,7 @@ public class DefaultService extends UnicastRemoteObject implements Service {
 
     @Override
     public boolean checkPassword(String password) {
-        return SECRET.equals(password);
+        return publisherSecret.equals(password);
     }
 
     private void assertPassword(String password) {
