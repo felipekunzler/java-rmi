@@ -40,7 +40,7 @@ public class QueueConsumer {
             Consumer consumer = new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope,
-                                           AMQP.BasicProperties properties, byte[] body) throws IOException {
+                                           AMQP.BasicProperties properties, byte[] body) {
                     News news = Util.deserialize(body);
                     log.info("Received message {}", news);
                     onNewsReceived.accept(news);

@@ -89,16 +89,12 @@ public class Controller implements Initializable {
         queueConsumer = new QueueConsumer(Config.getRabbitHost(), Config.getRabbitUser(), Config.getRabbitPassword());
         service = lookupService();
 
-        btn_login.setOnAction(e -> {
-            login();
-        });
+        btn_login.setOnAction(e -> login());
         btn_topics.setOnMouseClicked(e -> {
             clearWindow();
             showTopics();
         });
-        btn_news.setOnMouseClicked(e -> {
-            showNews();
-        });
+        btn_news.setOnMouseClicked(e -> showNews());
         btn_news_details.setOnMouseClicked(e -> showNewsDetails());
         btn_notifications.setOnMouseClicked(e -> {
             clearWindow();
